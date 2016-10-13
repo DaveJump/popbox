@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>popbox demo</title>
+	<link rel="stylesheet" href="popbox.css">
+	<style>
+	body{
+		font: 16px/1.5 微软雅黑, Arial, Helvetica, Tahoma, sans-serif;
+	}
+	#content.content{
+		display: none;
+	}
+	</style>
+</head>
+<body>
+	<button id="popbtn">popbox</button>
+	<input type="text" id="curDate" readonly>
+
+	<div id="content" class="content" data-content="popbox">
+		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
+	</div>
+
+	<script src="jquery-1.11.1.min.js"></script>
+	<script src="jquery.popbox.js"></script>
+	<script>
+		$(function(){
+			var box = $('#content').popbox({
+				center: true,
+				header: {
+					title: {
+						text: '提示'
+					},
+					closeButton: {
+						beforeClose: function(){
+							alert('closing!!');
+							// $(this).stopClosing(true);
+						},
+						afterClose: function(){
+							$('#curDate').val(new Date().toLocaleString());
+						}
+					}
+				},
+				footer: {
+					buttonGroup: {
+						confirm: {
+							text: '确认',
+							handler: function(){
+								alert('you click the "CONFIRM" button!');
+								// $(this).hide();
+							}
+						},
+						cancel: {
+							text: '取消',
+							handler: function(){
+								alert('you click the "CANCEL" button!');
+								$(this).hide();
+							}
+						}
+					}
+				}
+			});
+			$('#popbtn').click(function(){
+				box.show();
+			});
+		});
+	</script>
+</body>
+</html>

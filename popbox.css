@@ -1,0 +1,65 @@
+.popbox-mask{
+	display: none;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 99999;
+	background: rgba(0,0,0,.5);
+	background: url(./bg-mask.png) left top repeat\0;
+	color: #333;
+}
+.popbox-main{
+	position: absolute;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.popbox-mask,.popbox-main{
+	transition: all .4s;
+	-webkit-transition: all .4s;
+}
+.popbox-header{
+	padding: 0 12px;
+	background: #1693f0;
+	position: relative;
+	border-radius: 5px 5px 0 0;
+	color: #fff;
+}
+.popbox-header span.popbox-close{
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	margin-top: -12px;
+	cursor: pointer;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+}
+.popbox-content{
+	padding: 12px;
+}
+.popbox-footer{
+	background: #e8e8e8;
+	padding: 0 10px;
+	border-radius: 0 0 5px 5px;
+}
+.popbox-footer span{
+	float: right;
+	line-height: 34px;
+	min-width: 70px;
+	padding: 0 5px;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 4px;
+	font-size: 14px;
+	background: #1693f0;
+	color: #fff;
+	margin: 8px 6px 0 6px;
+}
+.popbox-footer span:hover{
+	opacity: .8;
+	filter: alpha(opacity=80);
+}
