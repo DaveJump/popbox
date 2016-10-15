@@ -19,6 +19,13 @@
 
 	<div id="content" class="content" data-content="popbox">
 		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
+		<br>
+		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
+	</div>
+
+	<div id="content2" class="content" data-content="popbox">
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. In architecto expedita vero odio, repellat asperiores officiis amet impedit aliquam dolore saepe adipisci eos numquam blanditiis tempora voluptate aut. Et, explicabo. <br>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates maxime perferendis id, ducimus, possimus, optio sed pariatur enim impedit dolore corrupti minus itaque atque. Dolores quia iure praesentium, ipsam expedita!
 	</div>
 
 	<script src="jquery-1.11.1.min.js"></script>
@@ -27,14 +34,14 @@
 		$(function(){
 			var box = $('#content').popbox({
 				center: true,
+				animation: ['pop',200],
 				header: {
 					title: {
-						text: '提示'
+						text: 'pop-in animation'
 					},
 					closeButton: {
-						beforeClose: function(){
-							alert('closing!!');
-							// $(this).stopClosing(true);
+						beforeClose: function(box){
+							console.log(box);
 						},
 						afterClose: function(){
 							$('#curDate').val(new Date().toLocaleString());
@@ -45,24 +52,63 @@
 					buttonGroup: {
 						confirm: {
 							text: '确认',
-							handler: function(){
-								alert('you click the "CONFIRM" button!');
+							handler: function(box){
+								console.log(box);
 								// $(this).hide();
 							}
 						},
 						cancel: {
 							text: '取消',
+							handler: function(box){
+								console.log(box);
+								this.popboxHide();
+							}
+						}
+					}
+				}
+			});
+
+			var box2 = $('#content2').popbox({
+				animation: ['fade',600],
+				header: {
+					title: {
+						text: 'without animation'
+					},
+					closeButton: {
+						beforeClose: function(box){
+							console.log(box);
+							
+						},
+						afterClose: function(){
+							$('#curDate').val(new Date().toLocaleString().split(' ')[0]);
+						}
+					}
+				},
+				footer: {
+					buttonGroup: {
+						confirm: {
+							text: 'confirm',
 							handler: function(){
-								alert('you click the "CANCEL" button!');
-								$(this).hide();
+								console.log(this.box);
+							}
+						},
+						cancel: {
+							text: 'cancel',
+							handler: function(){
+								console.log(this.box);
+								this.popboxHide();
+								$('#curDate').val(new Date().toLocaleString().split(' ')[0]);
 							}
 						}
 					}
 				}
 			});
 			$('#popbtn').click(function(){
-				box.show();
+				box.popboxShow();
 			});
+			$('#curDate').click(function(){
+				box2.popboxShow();
+			})
 		});
 	</script>
 </body>

@@ -18,11 +18,7 @@
 					height: 320,
 					center: true,
 					draggable: false,
-					animation: {
-						enabled: true,
-						type: 'zoom-fade',
-						duration: 400
-					},
+					animation: ['pop', 300],
 					header: {
 						enabled: true,
 						height: 40,
@@ -40,8 +36,7 @@
 						}
 					},
 					content: {
-						height: 230,
-						color: null
+						height: 230
 					},
 					footer: {
 						enabled: true,
@@ -67,9 +62,80 @@
 				randomId = (Math.abs(Math.random() - 0.01) + '').replace('.', ''),
 				content = $(this).attr('data-content') == 'popbox' ? $(this).html() : '';
 
+			console.log(config.animation)
+
 			$(this).attr('data-content') == 'popbox' && $(this).hide();
 
-			function resetStyle(boxWrap, els) {
+			function init(boxWrap, els) {
+				var aniType;
+				if (config.animation instanceof Array) {
+					switch (config.animation[0]) {
+						case 'pop':
+							aniType = 'pop';
+							boxWrap.children('.popbox-main').addClass('pop-default');
+							break;
+						case 'fade':
+							aniType = 'fade';
+							boxWrap.children('.popbox-main').addClass('fade-default');
+							break;
+					}
+				}
+
+				var Methods = function(aniType) {
+					this.box = boxWrap;
+					this.aniType = aniType;
+					Methods.prototype.popboxShow = function() {
+						if (!this.aniType) {
+							this.box.css({
+								visibility: 'visible',
+								opacity: 1,
+								transition: 'all 0s',
+								webkitTransition: 'all 0s'
+							}).show();
+							this.box.children('.popbox-main').css({
+								visibility: 'visible',
+								opacity: 1,
+								transition: 'all 0s',
+								webkitTransition: 'all 0s'
+							});
+						} else {
+							this.box.show();
+							var _thisbox = this.box,
+								_this = this;
+							window.setTimeout(function() {
+								_thisbox.css({
+									transition: 'all ' + (config.animation[1] / 1000) + 's',
+									webkitTransition: 'all ' + (config.animation[1] / 1000) + 's'
+								});
+								_thisbox.children('.popbox-main').css({
+									transition: 'all ' + (config.animation[1] / 1000) + 's',
+									webkitTransition: 'all ' + (config.animation[1] / 1000) + 's'
+								});
+								_thisbox.addClass('in');
+								if (_this.aniType == 'pop') {
+									_thisbox.children('.popbox-main').removeClass('pop-default').addClass('pop-in');
+								} else {
+									_thisbox.children('.popbox-main').addClass('in');
+								}
+							}, 50);
+						}
+					}
+					Methods.prototype.popboxHide = function() {
+						if (!this.aniType) {
+							this.box.hide();
+						} else {
+							this.box.removeClass('in');
+							if (this.aniType == 'pop') {
+								this.box.children('.popbox-main').removeClass('pop-in').addClass('pop-default');
+							} else {
+								this.box.children('.popbox-main').removeClass('in');
+							}
+						}
+					}
+				};
+
+				var newMethod = new Methods(aniType);
+
 				/* mainBox */
 				els.box.css({
 					width: config.width + 'px',
@@ -101,20 +167,17 @@
 						afterHandler = config.header.closeButton.afterClose;
 					if (beforeHandler && typeof beforeHandler === 'function') {
 						//box closing should be stopped manually?
-						$.fn.stopClosing = function(stop) {
-							if ($(this)[0] === boxWrap[0]) {
-								stopped = stop;
-							}
-						}
-						beforeHandler.call(boxWrap[0]);
-						if (stopped) {
+						var shouldClose = beforeHandler.call(newMethod, newMethod.box);
+						if (shouldClose === false || shouldClose === 0) {
 							return;
 						} else {
-							boxWrap.hide();
+							newMethod.popboxHide();
 						}
 					}
 					if (!stopped && afterHandler && typeof afterHandler === 'function') {
-						afterHandler.call(boxWrap[0]);
+						window.setTimeout(function() {
+							afterHandler.call(newMethod, newMethod.box);
+						}, config.animation[1] || 50);
 					}
 					e.stopPropagation();
 				});
@@ -124,49 +187,48 @@
 
 				/* content */
 				els.content.css({
-					height: config.content.height + 'px',
-					backgroundColor: config.content.color && config.content.color
+					height: config.content.height + 'px'
 				});
 
 				/* footer */
 				var confirm = config.footer.buttonGroup.confirm,
-						cancel = config.footer.buttonGroup.cancel;
+					cancel = config.footer.buttonGroup.cancel;
 
 				!config.footer.enabled && els.footer.hide();
 				els.footer.css({
 					height: config.footer.height + 'px',
-					backgroundColor: config.footer.color && config.footer.color 
+					backgroundColor: config.footer.color && config.footer.color
 				});
-				if(config.footer.enabled){
+				if (config.footer.enabled) {
 					!confirm['enabled'] && els.confirm.hide();
 					!confirm['enabled'] && els.cancel.hide();
 					els.confirm.text(confirm['text']);
 					els.cancel.text(cancel['text']);
-					if(confirm['color'] instanceof Array && confirm['color'].length){
+					if (confirm['color'] instanceof Array && confirm['color'].length) {
 						els.confirm.css({
 							backgroundColor: confirm['color'][0],
 							color: confirm['color'][1]
 						});
 					}
-					if(cancel['color'] instanceof Array && cancel['color'].length){
+					if (cancel['color'] instanceof Array && cancel['color'].length) {
 						els.cancel.css({
 							backgroundColor: cancel['color'][0],
 							color: cancel['color'][1]
 						});
 					}
 				}
-				if(confirm.handler && typeof confirm.handler === 'function'){
-					els.confirm.off('click').on('click',function(){
-						confirm.handler.call(boxWrap[0]);
+				if (confirm.handler && typeof confirm.handler === 'function') {
+					els.confirm.off('click').on('click', function() {
+						confirm.handler.call(newMethod, newMethod.box);
 					});
 				}
-				if(cancel.handler && typeof cancel.handler === 'function'){
-					els.cancel.off('click').on('click',function(){
-						cancel.handler.call(boxWrap[0]);
+				if (cancel.handler && typeof cancel.handler === 'function') {
+					els.cancel.off('click').on('click', function() {
+						cancel.handler.call(newMethod, newMethod.box);
 					});
 				}
 
-				return boxWrap;
+				return newMethod;
 			}
 
 			return (function() {
@@ -185,21 +247,20 @@
 					'</div>';
 				$(document.body).append(htmlstr);
 				var boxWrap = $('#popbox' + randomId + ''),
-						els = {
-							box: boxWrap.find('.popbox-main'),
-							header: boxWrap.find('.popbox-header'),
-							title: boxWrap.find('.popbox-title'),
-							close: boxWrap.find('.popbox-close'),
-							content: boxWrap.find('.popbox-content'),
-							footer: boxWrap.find('.popbox-footer'),
-							confirm: boxWrap.find('.popbox-confirm'),
-							cancel: boxWrap.find('.popbox-cancel')
-						};
-				return resetStyle(boxWrap, els);
+					els = {
+						box: boxWrap.find('.popbox-main'),
+						header: boxWrap.find('.popbox-header'),
+						title: boxWrap.find('.popbox-title'),
+						close: boxWrap.find('.popbox-close'),
+						content: boxWrap.find('.popbox-content'),
+						footer: boxWrap.find('.popbox-footer'),
+						confirm: boxWrap.find('.popbox-confirm'),
+						cancel: boxWrap.find('.popbox-cancel')
+					};
+				return init(boxWrap, els);
 			})();
 		} catch (e) {
 			throw new Error(e);
 		}
 	}
-
 });
