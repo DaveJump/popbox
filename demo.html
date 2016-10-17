@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>popbox demo</title>
-	<link rel="stylesheet" href="popbox.css">
+	<link rel="stylesheet" href="style/popbox.css">
 	<style>
 	body{
 		font: 16px/1.5 微软雅黑, Arial, Helvetica, Tahoma, sans-serif;
@@ -16,6 +16,7 @@
 <body>
 	<button id="popbtn">popbox</button>
 	<input type="text" id="curDate" readonly>
+	<input type="text" id="curDate2" readonly>
 
 	<div id="content" class="content" data-content="popbox">
 		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
@@ -28,18 +29,19 @@
 		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates maxime perferendis id, ducimus, possimus, optio sed pariatur enim impedit dolore corrupti minus itaque atque. Dolores quia iure praesentium, ipsam expedita!
 	</div>
 
-	<script src="jquery-1.11.1.min.js"></script>
-	<script src="jquery.popbox.js"></script>
+	<script src="script/jquery-1.11.1.min.js"></script>
+	<script src="script/jquery.popbox.js"></script>
 	<script>
 		$(function(){
 			var box = $('#content').popbox({
 				center: true,
 				animation: ['pop',200],
+				draggable: true,
 				header: {
 					title: {
 						text: 'pop-in animation'
 					},
-					closeButton: {
+					close: {
 						beforeClose: function(box){
 							console.log(box);
 						},
@@ -49,35 +51,35 @@
 					}
 				},
 				footer: {
-					buttonGroup: {
-						confirm: {
+					buttons: [
+						{
 							text: '确认',
-							handler: function(box){
+							handler: function(box,evt){
 								console.log(box);
-								// $(this).hide();
+								alert('you click the "confirm" button');
 							}
 						},
-						cancel: {
+						{
 							text: '取消',
 							handler: function(box){
 								console.log(box);
 								this.popboxHide();
 							}
 						}
-					}
+					]
 				}
 			});
 
 			var box2 = $('#content2').popbox({
 				animation: ['fade',600],
 				header: {
+					enabled: true,
 					title: {
-						text: 'without animation'
+						text: 'fade-in animation'
 					},
-					closeButton: {
+					close: {
 						beforeClose: function(box){
 							console.log(box);
-							
 						},
 						afterClose: function(){
 							$('#curDate').val(new Date().toLocaleString().split(' ')[0]);
@@ -85,30 +87,33 @@
 					}
 				},
 				footer: {
-					buttonGroup: {
-						confirm: {
+					enabled: true,
+					buttons: [
+						{
 							text: 'confirm',
 							handler: function(){
 								console.log(this.box);
 							}
 						},
-						cancel: {
+						{
 							text: 'cancel',
-							handler: function(){
-								console.log(this.box);
+							handler: function(box,evt){
+								console.log(box)
 								this.popboxHide();
+								alert('you click the "cancel" button');
 								$('#curDate').val(new Date().toLocaleString().split(' ')[0]);
 							}
 						}
-					}
+					]
 				}
 			});
+
 			$('#popbtn').click(function(){
 				box.popboxShow();
 			});
 			$('#curDate').click(function(){
 				box2.popboxShow();
-			})
+			});
 		});
 	</script>
 </body>
