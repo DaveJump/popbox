@@ -41,18 +41,15 @@
 						enabled: true,
 						height: 50,
 						color: undefined,
-						buttons: [
-							{
-								text: 'confirm',
-								color: [],
-								handler: undefined
-							},
-							{
-								text: 'cancel',
-								color: [],
-								handler: undefined
-							}
-						]
+						buttons: [{
+							text: 'confirm',
+							color: [],
+							handler: undefined
+						}, {
+							text: 'cancel',
+							color: [],
+							handler: undefined
+						}]
 					}
 				},
 				config = $.extend(true, defaults, options || {}),
@@ -79,7 +76,7 @@
 				var Methods = function(aniType) {
 					this.box = boxWrap;
 					this.aniType = aniType;
-					if(this.aniType){
+					if (this.aniType) {
 						this.transitionDur = {
 							transition: 'all ' + (config.animation[1] / 1000) + 's',
 							webkitTransition: 'all ' + (config.animation[1] / 1000) + 's'
@@ -156,16 +153,15 @@
 							afterHandler = config.header.close.afterClose;
 						if (beforeHandler && typeof beforeHandler === 'function') {
 							//box closing should be stopped manually?
-							var shouldClose = beforeHandler.call(newMethod, newMethod.box, window.event);
-							if (shouldClose === false || shouldClose === 0) {
+							var shouldClose = beforeHandler.call(newMethod, newMethod.box, e);
+							if (shouldClose === false || shouldClose === 0)
 								return;
-							} else {
+							else
 								newMethod.popboxHide();
-							}
 						}
 						if (!stopped && afterHandler && typeof afterHandler === 'function') {
 							window.setTimeout(function() {
-								afterHandler.call(newMethod, newMethod.box, window.event);
+								afterHandler.call(newMethod, newMethod.box, e);
 							}, config.animation[1] || 50);
 						}
 						e.stopPropagation();
@@ -193,8 +189,8 @@
 							color: buttons[index].color[1]
 						});
 						if (buttons[index].handler && typeof buttons[index].handler === 'function') {
-							$(this).off('click').on('click', function() {
-								buttons[index].handler.call(newMethod, newMethod.box, window.event);
+							$(this).off('click').on('click', function(e) {
+								buttons[index].handler.call(newMethod, newMethod.box, e);
 							});
 						}
 					});
@@ -211,16 +207,16 @@
 					marginTop: config.center && (-(totalHeight / 2) + 'px')
 				});
 
-				if(config.draggable){
-					boxWrap.children('.popbox-main').off('mousedown').on('mousedown',function(e){
+				if (config.draggable) {
+					boxWrap.children('.popbox-main').off('mousedown').on('mousedown', function(e) {
 						var downX = e.pageX,
-								downY = e.pageY,
-								downLeft = e.pageX - $(this).offset().left,
-								downTop = e.pageY - $(this).offset().top,
-								box = $(this);
-						$(document).on('mousemove',function(e){
+							downY = e.pageY,
+							downLeft = e.pageX - $(this).offset().left,
+							downTop = e.pageY - $(this).offset().top,
+							box = $(this);
+						$(document).on('mousemove', function(e) {
 							var moveLeft = e.pageX - downLeft,
-									moveTop = e.pageY - downTop;
+								moveTop = e.pageY - downTop;
 							box.css({
 								top: moveTop + 'px',
 								left: moveLeft + 'px',
@@ -231,10 +227,10 @@
 							});
 							e.preventDefault();
 							return false;
-						}).on('mouseup',function(){
+						}).on('mouseup', function(e) {
 							$(this).off('mousemove').off('mouseup');
+							e.stopPropagation();
 						});
-						e.stopPropagation();
 					});
 				}
 

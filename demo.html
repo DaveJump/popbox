@@ -16,7 +16,6 @@
 <body>
 	<button id="popbtn">popbox</button>
 	<input type="text" id="curDate" readonly>
-	<input type="text" id="curDate2" readonly>
 
 	<div id="content" class="content" data-content="popbox">
 		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
@@ -55,7 +54,7 @@
 						{
 							text: '确认',
 							handler: function(box,evt){
-								console.log(box);
+								console.log(box,evt);
 								alert('you click the "confirm" button');
 							}
 						},
@@ -72,6 +71,7 @@
 
 			var box2 = $('#content2').popbox({
 				animation: ['fade',600],
+				draggable: false,
 				header: {
 					enabled: true,
 					title: {
