@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>popbox demo</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="style/popbox.css">
 	<style>
 	body{
@@ -18,9 +19,7 @@
 	<input type="text" id="curDate" readonly>
 
 	<div id="content" class="content" data-content="popbox">
-		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
-		<br>
-		据《印度快报》10月11日报道，印度铁路公司正在研发一种使用最先进技术的新火车，该火车将配备玻璃式顶棚与资讯娱乐中心，优化乘车体验。印度铁路餐饮和旅游公司董事长兼总经理马诺查(Dr A K Manocha)介绍说：“这种列车是为了提升旅游质量，吸引国内外的高端游客。
+		<p style="text-align: center;">电池电量不足10%!</p>
 	</div>
 
 	<div id="content2" class="content" data-content="popbox">
@@ -34,11 +33,14 @@
 		$(function(){
 			var box = $('#content').popbox({
 				center: true,
+				width: 300,
+				theme: 'ios',
 				animation: ['pop',200],
 				draggable: true,
 				header: {
+					enabled: false,
 					title: {
-						text: 'pop-in animation'
+						text: 'Message1'
 					},
 					close: {
 						beforeClose: function(box){
@@ -49,12 +51,16 @@
 						}
 					}
 				},
+				content: {
+					height: 60,
+				},
 				footer: {
 					buttons: [
 						{
 							text: '确认',
 							handler: function(box,evt){
 								console.log(box,evt);
+								this.boxClose();
 								alert('you click the "confirm" button');
 							}
 						},
@@ -62,7 +68,7 @@
 							text: '取消',
 							handler: function(box){
 								console.log(box);
-								this.popboxHide();
+								this.boxClose();
 							}
 						}
 					]
@@ -72,10 +78,14 @@
 			var box2 = $('#content2').popbox({
 				animation: ['fade',600],
 				draggable: false,
+				theme: 'default',
+				afterShow: function(box){
+					alert(box);
+				},
 				header: {
 					enabled: true,
 					title: {
-						text: 'fade-in animation'
+						text: 'Message2'
 					},
 					close: {
 						beforeClose: function(box){
@@ -99,7 +109,7 @@
 							text: 'cancel',
 							handler: function(box,evt){
 								console.log(box)
-								this.popboxHide();
+								this.boxClose();
 								alert('you click the "cancel" button');
 								$('#curDate').val(new Date().toLocaleString().split(' ')[0]);
 							}
@@ -109,10 +119,10 @@
 			});
 
 			$('#popbtn').click(function(){
-				box.popboxShow();
+				box.boxOpen();
 			});
 			$('#curDate').click(function(){
-				box2.popboxShow();
+				box2.boxOpen();
 			});
 		});
 	</script>

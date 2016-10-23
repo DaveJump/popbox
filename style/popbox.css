@@ -15,6 +15,10 @@
 }
 .icon-close:before { content: "\e614"; }
 
+div,span,i,a,input{
+	-webkit-tap-highlight-color: transparent;
+}
+
 .popbox-mask{
 	display: none;
 	position: fixed;
@@ -34,6 +38,9 @@
 	background: #fff;
 	border-radius: 5px;
 	box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.popbox-main.ios-like{
+	
 }
 .popbox-mask,.popbox-main{
 	visibility: hidden;
@@ -60,6 +67,14 @@
 	border-radius: 5px 5px 0 0;
 	color: #fff;
 }
+.popbox-main.ios-like .popbox-header,
+.popbox-main.android-like .popbox-header{
+	background: #fff;
+	color: #555;
+}
+.popbox-main.ios-like .popbox-header{
+	text-align: center;
+}
 .popbox-header span.popbox-close{
 	position: absolute;
 	right: 8px;
@@ -71,6 +86,9 @@
 	line-height: 24px;
 	text-align: center;
 }
+.popbox-main.ios-like .popbox-header span.popbox-close{
+	display: none;
+}
 .popbox-header span.popbox-close:hover{
 	opacity: .8;
 	filter: alpha(opacity=80);
@@ -81,14 +99,33 @@
 .popbox-footer{
 	text-align: right;
 	background: #e8e8e8;
+	height: 50px;
 	padding: 0 10px;
 	border-radius: 0 0 5px 5px;
+}
+.popbox-main.ios-like .popbox-footer,
+.popbox-main.android-like .popbox-footer{
+	background: #fff;
+}
+.popbox-main.ios-like .popbox-footer{
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: stretch;
+	align-content: stretch;
+	height: 44px;
+	text-align: center;
+	border-top: 1px solid #D2D2D2;
+	padding: 0;
 }
 .popbox-footer span{
 	display: inline-block;
 	line-height: 34px;
+	height: 34px;
 	min-width: 70px;
-	padding: 0 5px;
+	padding: 0 6px;
 	text-align: center;
 	cursor: pointer;
 	border-radius: 4px;
@@ -96,6 +133,30 @@
 	background: #1693f0;
 	color: #fff;
 	margin: 8px 6px 0 6px;
+}
+.popbox-main.ios-like .popbox-footer span,
+.popbox-main.android-like .popbox-footer span{
+	font-size: 16px;
+	color: #3876D2;
+}
+.popbox-main.ios-like .popbox-footer span{
+	display: block;
+	flex-grow: 1;
+	height: 44px;
+	line-height: 44px;
+	min-width: auto;
+	background: none;
+	border-right: 1px solid #D2D2D2;
+	border-radius: 0;
+	margin: 0;
+}
+.popbox-main.ios-like .popbox-footer span:last-child{
+	border: none;
+}
+.popbox-main.android-like .popbox-footer span{
+	background: none;
+	min-width: auto;
+	margin: 8px 10px 0 10px;
 }
 .popbox-footer span:hover{
 	opacity: .8;

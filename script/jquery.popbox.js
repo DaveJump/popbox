@@ -17,8 +17,10 @@
 					width: 520,
 					height: undefined,
 					center: true,
+					theme: undefined,
 					draggable: false,
 					animation: ['pop', 300],
+					afterShow: undefined,
 					header: {
 						enabled: true,
 						height: 40,
@@ -39,17 +41,9 @@
 					},
 					footer: {
 						enabled: true,
-						height: 50,
+						height: undefined,
 						color: undefined,
-						buttons: [{
-							text: 'confirm',
-							color: [],
-							handler: undefined
-						}, {
-							text: 'cancel',
-							color: [],
-							handler: undefined
-						}]
+						buttons: undefined
 					}
 				},
 				config = $.extend(true, defaults, options || {}),
@@ -76,13 +70,15 @@
 				var Methods = function(aniType) {
 					this.box = boxWrap;
 					this.aniType = aniType;
+					var _thisbox = this.box,
+						_this = this;
 					if (this.aniType) {
 						this.transitionDur = {
 							transition: 'all ' + (config.animation[1] / 1000) + 's',
 							webkitTransition: 'all ' + (config.animation[1] / 1000) + 's'
 						}
 					}
-					Methods.prototype.popboxShow = function() {
+					Methods.prototype.boxOpen = function() {
 						if (!this.aniType) {
 							this.box.css({
 								visibility: 'visible',
@@ -96,10 +92,13 @@
 								transition: 'all 0s',
 								webkitTransition: 'all 0s'
 							});
+							window.setTimeout(function() {
+								if (config.afterShow && typeof config.afterShow === 'function') {
+									config.afterShow.call(_this, _thisbox);
+								}
+							}, 30);
 						} else {
 							this.box.show();
-							var _thisbox = this.box,
-								_this = this;
 							window.setTimeout(function() {
 								_thisbox.css(_this.transitionDur);
 								_thisbox.children('.popbox-main').css(_this.transitionDur);
@@ -109,10 +108,16 @@
 								} else {
 									_thisbox.children('.popbox-main').addClass('in');
 								}
+								window.setTimeout(function() {
+									if (config.afterShow && typeof config.afterShow === 'function') {
+										config.afterShow.call(_this, _thisbox);
+									}
+								}, config.animation[1] || 300);
 							}, 30);
+
 						}
 					};
-					Methods.prototype.popboxHide = function() {
+					Methods.prototype.boxClose = function() {
 						if (!this.aniType) {
 							this.box.hide();
 						} else {
@@ -125,7 +130,7 @@
 							var _this = this.box;
 							window.setTimeout(function() {
 								_this.hide();
-							}, config.animation[1] || 430);
+							}, config.animation[1] || 330);
 						}
 					};
 				};
@@ -157,7 +162,7 @@
 							if (shouldClose === false || shouldClose === 0)
 								return;
 							else
-								newMethod.popboxHide();
+								newMethod.boxClose();
 						}
 						if (!stopped && afterHandler && typeof afterHandler === 'function') {
 							window.setTimeout(function() {
@@ -182,11 +187,11 @@
 					height: config.footer.height + 'px',
 					backgroundColor: config.footer.color && config.footer.color
 				});
-				if (buttons.length) {
+				if (buttons && buttons instanceof Array && buttons.length) {
 					$.each(els.buttons, function(index) {
 						$(this).css({
-							backgroundColor: buttons[index].color[0],
-							color: buttons[index].color[1]
+							backgroundColor: buttons[index].color && buttons[index].color[0],
+							color: buttons[index].color && buttons[index].color[1]
 						});
 						if (buttons[index].handler && typeof buttons[index].handler === 'function') {
 							$(this).off('click').on('click', function(e) {
@@ -207,7 +212,8 @@
 					marginTop: config.center && (-(totalHeight / 2) + 'px')
 				});
 
-				if (config.draggable) {
+				var ua = window.navigator.userAgent;
+				if (config.draggable && (!/iphone|ipad/ig.test(ua) && !/android/ig.test(ua))) {
 					boxWrap.children('.popbox-main').off('mousedown').on('mousedown', function(e) {
 						var downX = e.pageX,
 							downY = e.pageY,
@@ -239,17 +245,39 @@
 
 			return (function() {
 				var buttons = config.footer.buttons,
-					buttonsStr = '';
+					buttonsStr = '',
+					ua = window.navigator.userAgent,
+					sys;
 				for (var i = 0; i < buttons.length; i++) {
 					buttonsStr += '<span>' + buttons[i].text + '</span>';
 				}
+				if (/iphone|ipad/ig.test(ua)) {
+					sys = 'ios-like';
+				} else if (/android/ig.test(ua)) {
+					sys = 'android-like';
+				}
+				if(config.theme){
+					switch(config.theme){
+						case 'default':
+							sys = '';
+							break;
+						case 'ios':
+							sys = 'ios-like';
+							break;
+						case 'android':
+							sys = 'android-like';
+							break;
+					}
+				}
 				var closeStr = config.header.close.enabled ? '<span class="popbox-close iconfont icon-close"></span>' : '',
 					headerStr = config.header.enabled ? '<div class="popbox-header">' + '<span class="popbox-title">' + config.header.title.text + '</span>' + closeStr +
-					'</div>' : '',
-					footerStr = config.footer.enabled ? '<div class="popbox-footer">' + buttonsStr + '</div>' : '',
-					mainStr = '<div id="popbox' + randomId + '" class="popbox-mask">' +
-					'<div class="popbox-main">' + headerStr +
-					'<div class="popbox-content">' + content + '</div>' + footerStr +
+					'</div>' : '';
+				if (config.footer.buttons.length) {
+					var footerStr = config.footer.enabled ? '<div class="popbox-footer">' + buttonsStr + '</div>' : '';
+				}
+				var mainStr = '<div id="popbox' + randomId + '" class="popbox-mask">' +
+					'<div class="popbox-main ' + sys + '">' + headerStr +
+					'<div class="popbox-content">' + content + '</div>' + (footerStr || '') +
 					'</div>' +
 					'</div>';
 
